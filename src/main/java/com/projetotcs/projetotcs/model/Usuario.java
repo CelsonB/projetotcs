@@ -35,6 +35,12 @@ public class Usuario {
     @Override
     public String toString() {
         return "Usuario [nome=" + nome + ", senha=" + senha + ", email=" + email + "]";
+    }
+    public Usuario(String senha, String email) {
+        this.senha = senha;
+        this.email = email;
+    }
+    public Usuario() {
     } 
 
     //#endregion

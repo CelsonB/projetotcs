@@ -24,7 +24,7 @@ import com.projetotcs.projetotcs.service.UsuarioService;
 
 
 @RestController
-@RequestMapping("/teste/projetotcs")
+@RequestMapping("")
 
 
 public class UsuarioController {

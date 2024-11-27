@@ -20,6 +20,13 @@ public class UsuarioRepository {
 
     private ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 
+    Usuario admin2 = new Usuario("admin@email.com", "123456");
+       
+    public UsuarioRepository(){
+        usuarios.add(admin2);
+    }
+
+
     //#region região de login e cadastro
 
     public boolean realizarLogin(String email, String senha){
