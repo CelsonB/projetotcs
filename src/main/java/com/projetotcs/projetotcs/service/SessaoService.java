@@ -27,12 +27,12 @@ public class SessaoService {
     public boolean sairSessao(UUID id) {
         if (sessoesAtivas.containsKey(id)) {
             sessoesAtivas.remove(id);
-            return true; // Sessão foi removida com sucesso
+            return true; 
         }
-        return false; // Sessão não encontrada
+        return false; 
     }
-    
+
     public void sairDeTodasSessoes() {
-        sessoesAtivas.clear(); // Remove todas as sessões ativas
+        sessoesAtivas.clear(); 
     }
 }

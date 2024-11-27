@@ -79,6 +79,11 @@ public class UsuarioController {
             
         
     }
+
+    @PostMapping ("/usuarios/logout")
+    public void deslogar(){
+        sessaoService.sairDeTodasSessoes();
+    }
     //#endregion
 
 
