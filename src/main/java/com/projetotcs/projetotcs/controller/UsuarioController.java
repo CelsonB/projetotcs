@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projetotcs.projetotcs.model.ErrorResponse;
+import com.projetotcs.projetotcs.model.TokenResponse;
 import com.projetotcs.projetotcs.model.Usuario;
 import com.projetotcs.projetotcs.service.SessaoService;
 import com.projetotcs.projetotcs.service.UsuarioService;
@@ -53,7 +54,11 @@ public class UsuarioController {
 
         if (usuarioServices.realizarLogin(user.getEmail(),user.getSenha())) {
             UUID sessionId = sessaoService.iniciarSessao(user);
-            return ResponseEntity.ok(sessionId); 
+
+         
+            
+            
+            return ResponseEntity.ok(new TokenResponse(sessionId)); 
 
         } else {
             System.out.println("entrou aqui, false");
