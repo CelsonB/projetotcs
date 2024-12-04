@@ -23,6 +23,7 @@ public class UsuarioRepository {
     Usuario admin2 = new Usuario("admin@email.com", "123456");
        
     public UsuarioRepository(){
+        admin2.setNome("admin");
         usuarios.add(admin2);
     }
 
@@ -35,7 +36,6 @@ public class UsuarioRepository {
             if(user.getEmail().equals(email) && user.getSenha().equals(senha)){
                 System.out.println("repository, true");
                 return true;
-
             }
         }
         System.out.println("repository, false");
@@ -44,19 +44,30 @@ public class UsuarioRepository {
 
     public boolean cadastrarUsuario(Usuario user){
 
+        if(isEmailUsed(user.getEmail())){
+        return false;
+        }
         usuarios.add(user);
         return true; 
     }
 
     //#endregion
+
     
+    private boolean isEmailUsed(String email){
+        if(listarPorEmail(email)==null){
+            return false;
+        }else{
+            return true;
+        }
+   
+    }
     
     public ArrayList<Usuario> listarUsuarios(){
         return usuarios;
     }
 
     public Optional<Usuario> listarPorEmail(String email){
-
         return usuarios.stream()
         .filter(usuario-> usuario.getEmail().equals(email))
         .findFirst();
@@ -64,9 +75,7 @@ public class UsuarioRepository {
 
 
     public Usuario atualizarUsuario(String email, Usuario usuario){
-        
       if(deletarUsuario(email)){
-        
         usuario.setEmail(email);
         cadastrarUsuario(usuario);
 
@@ -81,8 +90,6 @@ public class UsuarioRepository {
 
 
     public boolean deletarUsuario(String email){
-
-        
         Optional <Usuario> usuario = listarPorEmail(email);
         if(usuario.isPresent()){
             usuarios.remove(usuario.get());

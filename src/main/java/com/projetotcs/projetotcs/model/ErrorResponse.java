@@ -2,17 +2,17 @@ package com.projetotcs.projetotcs.model;
 
 
 public class ErrorResponse {
-    private String message;
+    private String mensagem;
 
     public ErrorResponse(String message) {
-        this.message = message;
+        this.mensagem = message;
     }
 
     public String getMessage() {
-        return message;
+        return mensagem;
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        this.mensagem = message;
     }
 }

@@ -21,6 +21,8 @@ import com.projetotcs.projetotcs.model.TokenResponse;
 import com.projetotcs.projetotcs.model.Usuario;
 import com.projetotcs.projetotcs.service.SessaoService;
 import com.projetotcs.projetotcs.service.UsuarioService;
+import java.util.regex.Pattern;
+
 
 
 
@@ -54,15 +56,11 @@ public class UsuarioController {
 
         if (usuarioServices.realizarLogin(user.getEmail(),user.getSenha())) {
             UUID sessionId = sessaoService.iniciarSessao(user);
-
-         
-            
-            
             return ResponseEntity.ok(new TokenResponse(sessionId)); 
 
         } else {
             System.out.println("entrou aqui, false");
-            ErrorResponse errorResponse = new ErrorResponse("Credenciais inválidas");
+            ErrorResponse errorResponse = new ErrorResponse("Email e/ou senha invalidos");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse); 
 
         }
@@ -75,15 +73,39 @@ public class UsuarioController {
 
     public ResponseEntity cadastrarUsuario(@RequestBody Usuario user){
         boolean status = usuarioServices.cadastrarUsuario(user);
+
+        if (user == null || !isValidUser (user)) {
+            // Retorna 400 Bad Request se os dados do usuário forem inválidos
+            ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+
         if(status){
           return ResponseEntity.ok("");
         }else{
-            ErrorResponse errorResponse = new ErrorResponse("Dados invalidos");
+            ErrorResponse errorResponse = new ErrorResponse("Email ja cadastrado");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse); 
         }
-            
+    }
+
+    private boolean isValidUser (Usuario user) {
+        if(user.getNome().length()>3 && user.getNome().length()<100){
+            if(user.getEmail().contains("@") && isNumeric(user.getSenha())){
+                return true;
+            }
+            return false;
+        }
+        else{
+            return false;
+        }
         
     }
+
+
+    public static boolean isNumeric(String str) {
+        return str != null && Pattern.matches("\\d+", str);
+    }
+
 
     @PostMapping ("/usuarios/logout")
     public void deslogar(){
@@ -118,7 +140,15 @@ public class UsuarioController {
     @PutMapping("/usuarios/{email}")
     public ResponseEntity<?> atualizarUsuario(@PathVariable String email,@RequestBody Usuario usuario){
         
+        
+
+        if (usuario == null || !isValidUser (usuario)) {
+            // Retorna 400 Bad Request se os dados do usuário forem inválidos
+            ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
         Usuario user = usuarioServices.atualizarUsuario(email, usuario);
+
         if(user==null){
             ErrorResponse errorResponse = new ErrorResponse("Email não encontrado");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
@@ -132,6 +162,11 @@ public class UsuarioController {
 
     @DeleteMapping("/usuarios/{email}")
      public ResponseEntity deletarUsuario(@PathVariable String email){
+
+        if(!email.contains("@")){
+               ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
+               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
 
         if(usuarioServices.deletarUsuario(email)){
             return ResponseEntity.ok("");
