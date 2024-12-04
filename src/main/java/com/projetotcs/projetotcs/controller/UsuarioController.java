@@ -107,7 +107,7 @@ public class UsuarioController {
     }
 
 
-    @PostMapping ("/usuarios/logout")
+    @PostMapping ("/logout")
     public void deslogar(){
         sessaoService.sairDeTodasSessoes();
     }
@@ -139,8 +139,8 @@ public class UsuarioController {
 
     @PutMapping("/usuarios/{email}")
     public ResponseEntity<?> atualizarUsuario(@PathVariable String email,@RequestBody Usuario usuario){
-        
-        
+
+        usuario.setEmail(email);
 
         if (usuario == null || !isValidUser (usuario)) {
             // Retorna 400 Bad Request se os dados do usuário forem inválidos
@@ -148,7 +148,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         Usuario user = usuarioServices.atualizarUsuario(email, usuario);
-
         if(user==null){
             ErrorResponse errorResponse = new ErrorResponse("Email não encontrado");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
@@ -156,7 +155,7 @@ public class UsuarioController {
             return ResponseEntity.ok(user);
         }
         
-
+ 
     }
 
 

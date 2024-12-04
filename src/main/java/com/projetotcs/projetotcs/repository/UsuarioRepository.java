@@ -20,12 +20,13 @@ public class UsuarioRepository {
 
     private ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 
-    Usuario admin2 = new Usuario("admin@email.com", "123456");
+    Usuario admin2 = new Usuario("123456", "admin@email.com");
        
     public UsuarioRepository(){
         admin2.setNome("admin");
         usuarios.add(admin2);
     }
+    
 
 
     //#region região de login e cadastro
@@ -44,18 +45,24 @@ public class UsuarioRepository {
 
     public boolean cadastrarUsuario(Usuario user){
 
+        //usuarios.add(user);
+        System.out.println(user);
         if(isEmailUsed(user.getEmail())){
-        return false;
+            usuarios.add(user);
+            return true; 
+        }else{
+            return false;
         }
-        usuarios.add(user);
-        return true; 
+      
     }
 
     //#endregion
 
-    
+     
     private boolean isEmailUsed(String email){
-        if(listarPorEmail(email)==null){
+        Optional <Usuario> usuario = listarPorEmail(email);
+
+        if(usuario.isPresent()){
             return false;
         }else{
             return true;
@@ -75,17 +82,17 @@ public class UsuarioRepository {
 
 
     public Usuario atualizarUsuario(String email, Usuario usuario){
+        
+
+        
       if(deletarUsuario(email)){
-        usuario.setEmail(email);
+
         cadastrarUsuario(usuario);
 
         return usuario;
       }else{
         return null;
       }
-        
-     
-        
     }
 
 
