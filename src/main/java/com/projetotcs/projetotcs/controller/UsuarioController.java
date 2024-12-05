@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +48,7 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<?> realizarLogin(@RequestBody Usuario user) {
         System.out.println("Login:"+user);
-     
+    
 
         if (user.getEmail() == null || user.getEmail().isEmpty()) {
             ErrorResponse errorResponse = new ErrorResponse("Email inválido");
@@ -107,73 +108,143 @@ public class UsuarioController {
     }
 
 
-    @PostMapping ("/logout")
-    public void deslogar(){
-        sessaoService.sairDeTodasSessoes();
-    }
-    //#endregion
+@PostMapping("/logout")
 
+    public ResponseEntity<String> deslogar(@RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
+        
+        
+        if(isHeaderValid(authorizationHeader)){
+            sessaoService.sairDeTodasSessoes();
+            return ResponseEntity.ok("Deslogado com sucesso.");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
+        }
+        
+    }
+
+    
+    //#endregion
+ 
 
     @GetMapping("/usuarios")
-    public ResponseEntity<ArrayList<Usuario>> listarUsuarios(){
+    public ResponseEntity<?> listarUsuarios(
+        @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
-        return ResponseEntity.ok(usuarioServices.listarUsuarios());
+        if(isHeaderValid(authorizationHeader)){
+            return ResponseEntity.ok(usuarioServices.listarUsuarios());
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
+        }
+       
 
     }
 
     @GetMapping("/usuarios/{email}")
-    public ResponseEntity<?> listarPorEmail(@PathVariable String email){
+    public ResponseEntity<?> listarPorEmail(@PathVariable String email, 
+    @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
+        
+        if(isHeaderValid(authorizationHeader)){
+            Optional<Usuario> user = usuarioServices.listarPorEmail(email);
 
-        Optional<Usuario> user = usuarioServices.listarPorEmail(email);
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            } else {
+                ErrorResponse errorResponse = new ErrorResponse("Usuario não encontrado");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            }
 
-
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            ErrorResponse errorResponse = new ErrorResponse("Usuario não encontrado");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
         }
+
+
+      
+
+
+        
 
     }
 
     @PutMapping("/usuarios/{email}")
-    public ResponseEntity<?> atualizarUsuario(@PathVariable String email,@RequestBody Usuario usuario){
+    public ResponseEntity<?> atualizarUsuario(@PathVariable String email, 
+    @RequestBody Usuario usuario,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
-        usuario.setEmail(email);
 
-        if (usuario == null || !isValidUser (usuario)) {
-            // Retorna 400 Bad Request se os dados do usuário forem inválidos
-            ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-        Usuario user = usuarioServices.atualizarUsuario(email, usuario);
-        if(user==null){
-            ErrorResponse errorResponse = new ErrorResponse("Email não encontrado");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
+        if(isHeaderValid(authorizationHeader)){
+            usuario.setEmail(email);
+            if (usuario == null || !isValidUser (usuario)) {
+                // Retorna 400 Bad Request se os dados do usuário forem inválidos
+                ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            }
+            Usuario user = usuarioServices.atualizarUsuario(email, usuario);
+            if(user==null){
+                ErrorResponse errorResponse = new ErrorResponse("Email não encontrado");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+            }else{
+                return ResponseEntity.ok(user);
+            }
+
         }else{
-            return ResponseEntity.ok(user);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
         }
+
+
+
+
+        
         
  
     }
 
 
     @DeleteMapping("/usuarios/{email}")
-     public ResponseEntity deletarUsuario(@PathVariable String email){
+     public ResponseEntity deletarUsuario(@PathVariable String email, 
+     @RequestBody Usuario usuario,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
+
+
+        if(isHeaderValid(authorizationHeader)){
 
         if(!email.contains("@")){
-               ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
-               return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+                ErrorResponse errorResponse = new ErrorResponse("Dados inválidos");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+         }
+ 
+         if(usuarioServices.deletarUsuario(email)){
+             return ResponseEntity.ok("");
+         }else{
+             ErrorResponse errorResponse = new ErrorResponse("Usuario não encontrado");
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse); 
+         }
+
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
         }
 
-        if(usuarioServices.deletarUsuario(email)){
-            return ResponseEntity.ok("");
-        }else{
-            ErrorResponse errorResponse = new ErrorResponse("Usuario não encontrado");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse); 
-        }
+
+
+
+
+       
 
      }
+
+
+
+
+     public boolean isHeaderValid(String authorizationHeader ){
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return false;
+        }
+        
+        String token = authorizationHeader.substring(7); 
+        if (!sessaoService.obterSessao(UUID.fromString(token)).isTokenValido(UUID.fromString(token))) {
+            return false;
+        }
+        return true;
+    }
+
     
 }

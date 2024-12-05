@@ -26,6 +26,13 @@ public class Sessao {
         return dataCriacao;
     }
 
+    public boolean isTokenValido(UUID token){
+     System.out.println(this.id +"=="+token);
+     boolean op2 = this.id.equals(token);
+        System.out.println(op2);
+        return  op2;
+    }
+
     @Override
     public String toString() {
         return "Sessao [id=" + id + ", usuario=" + usuario + ", dataCriacao=" + dataCriacao + "]";

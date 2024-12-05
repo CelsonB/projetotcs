@@ -35,7 +35,7 @@ public class UsuarioRepository {
         
         for(Usuario user: usuarios){
             if(user.getEmail().equals(email) && user.getSenha().equals(senha)){
-                System.out.println("repository, true");
+                
                 return true;
             }
         }
@@ -47,7 +47,7 @@ public class UsuarioRepository {
 
         //usuarios.add(user);
         System.out.println(user);
-        if(isEmailUsed(user.getEmail())){
+        if(!isEmailUsed(user.getEmail())){
             usuarios.add(user);
             return true; 
         }else{
@@ -63,9 +63,9 @@ public class UsuarioRepository {
         Optional <Usuario> usuario = listarPorEmail(email);
 
         if(usuario.isPresent()){
-            return false;
-        }else{
             return true;
+        }else{
+            return false;
         }
    
     }
@@ -98,6 +98,7 @@ public class UsuarioRepository {
 
     public boolean deletarUsuario(String email){
         Optional <Usuario> usuario = listarPorEmail(email);
+
         if(usuario.isPresent()){
             usuarios.remove(usuario.get());
             return true;
