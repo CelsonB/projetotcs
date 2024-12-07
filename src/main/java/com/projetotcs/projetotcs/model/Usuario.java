@@ -5,12 +5,14 @@ public class Usuario {
     private String nome; 
     private String senha;
     private String email;
-    
+    private Boolean admin = false;
     
     //#region set e getters 
     
     
-
+    public Boolean isAdmin(){
+        return this.admin;
+    }
 
     public String getNome() {
         return nome;
@@ -36,10 +38,11 @@ public class Usuario {
     public String toString() {
         return "Usuario [nome=" + nome + ", senha=" + senha + ", email=" + email + "]";
     }
-    public Usuario(String senha, String email) {
+    public Usuario(String senha, String email,boolean role) {
         this.senha = senha;
         this.email = email;
-    }
+        this.admin = role;
+    } 
     public Usuario() {
     } 
 

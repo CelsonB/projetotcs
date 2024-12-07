@@ -20,7 +20,7 @@ public class UsuarioRepository {
 
     private ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 
-    Usuario admin2 = new Usuario("123456", "admin@email.com");
+    Usuario admin2 = new Usuario("123456", "admin@email.com", true);
        
     public UsuarioRepository(){
         admin2.setNome("admin");

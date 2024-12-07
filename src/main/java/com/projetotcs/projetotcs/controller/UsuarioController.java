@@ -57,7 +57,7 @@ public class UsuarioController {
 
         if (usuarioServices.realizarLogin(user.getEmail(),user.getSenha())) {
             UUID sessionId = sessaoService.iniciarSessao(user);
-            return ResponseEntity.ok(new TokenResponse(sessionId)); 
+            return ResponseEntity.ok(new TokenResponse(sessionId, user.isAdmin()) ); 
 
         } else {
             System.out.println("entrou aqui, false");
