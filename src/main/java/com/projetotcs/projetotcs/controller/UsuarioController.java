@@ -56,8 +56,8 @@ public class UsuarioController {
         }
 
         if (usuarioServices.realizarLogin(user.getEmail(),user.getSenha())) {
-            UUID sessionId = sessaoService.iniciarSessao(user);
-            return ResponseEntity.ok(new TokenResponse(sessionId, user.isAdmin()) ); 
+            String sessionId = sessaoService.iniciarSessao(user);
+            return ResponseEntity.ok(new TokenResponse(sessionId) ); 
 
         } else {
             System.out.println("entrou aqui, false");
@@ -223,12 +223,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
         }
 
-
-
-
-
-       
-
      }
 
 
@@ -240,7 +234,8 @@ public class UsuarioController {
         }
         
         String token = authorizationHeader.substring(7); 
-        if (!sessaoService.obterSessao(UUID.fromString(token)).isTokenValido(UUID.fromString(token))) {
+
+        if (!sessaoService.obterSessao(token).isTokenValido(token)) {
             return false;
         }
         return true;

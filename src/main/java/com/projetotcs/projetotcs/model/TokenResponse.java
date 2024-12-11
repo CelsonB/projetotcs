@@ -3,19 +3,19 @@ package com.projetotcs.projetotcs.model;
 import java.util.UUID;
 
 public class TokenResponse {
-    private UUID token;
-    private boolean isAdmin = false;
+    private String token;
 
-    public TokenResponse(UUID token, boolean role) {
+
+    public TokenResponse(String token) {
         this.token = token;
-        this.isAdmin = role;
+  
     }
 
-    public UUID getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(UUID token) {
+    public void setToken(String token) {
         this.token = token;
     }
 }

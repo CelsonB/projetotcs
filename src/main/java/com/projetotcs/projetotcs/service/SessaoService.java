@@ -11,20 +11,20 @@ import com.projetotcs.projetotcs.model.Usuario;
 
 @Service
 public class SessaoService {
-    private Map<UUID, Sessao> sessoesAtivas = new HashMap<>();
+    private Map<String, Sessao> sessoesAtivas = new HashMap<>();
 
-    public UUID iniciarSessao(Usuario usuario) {
+    public String iniciarSessao(Usuario usuario) {
         Sessao sessao = new Sessao(usuario);
-        sessoesAtivas.put(sessao.getId(), sessao);
-        return sessao.getId();
+        sessoesAtivas.put(sessao.getToken(), sessao);
+        return sessao.getToken();
     }
 
-    public Sessao obterSessao(UUID id) {
+    public Sessao obterSessao(String id) {
         return sessoesAtivas.get(id);
     }
 
 
-    public boolean sairSessao(UUID id) {
+    public boolean sairSessao(String id) {
         if (sessoesAtivas.containsKey(id)) {
             sessoesAtivas.remove(id);
             return true; 
