@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.projetotcs.projetotcs.service.CategoriaService;
 import com.projetotcs.projetotcs.service.SessaoService;
+import com.projetotcs.projetotcs.model.Categoria;
 import com.projetotcs.projetotcs.model.ErrorResponse;
 import com.projetotcs.projetotcs.model.Sessao;
 
@@ -74,10 +75,10 @@ public class CategoriaController {
     
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> pesquisarCategoriaPorId(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
+    public ResponseEntity<?> atualizarCategoria(@PathVariable int id, @RequestBody Categoria cat,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
         if(isHeaderValid(authorizationHeader)){
-            return ResponseEntity.ok(categoriaService.pesquisarCategoriaPorId(id));
+            return ResponseEntity.ok(categoriaService.atualizarCategoria(id, cat.getNome()));
         }else
         {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não está logado"));

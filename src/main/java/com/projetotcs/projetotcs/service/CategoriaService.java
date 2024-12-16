@@ -26,9 +26,24 @@ public class CategoriaService {
         return categoriaRepository.findAll();
     }
 
-    public Optional<Categoria> pesquisarCategoriaPorId(int id) {
+    /*
+     public Optional<Categoria> pesquisarCategoriaPorId(int id) {
         return categoriaRepository.findById(id); // Retorna a categoria com o ID especificado
     }
+     * 
+     */
+
+    public Optional<Categoria> atualizarCategoria(int id, String novoNome) {
+        Optional<Categoria> categoriaExistente = categoriaRepository.findById(id);
+
+        if (categoriaExistente.isPresent()) {
+            Categoria categoria = categoriaExistente.get();
+            categoria.setNome(novoNome); // Atualiza o nome da categoria
+            return Optional.of(categoriaRepository.save(categoria)); // Salva a categoria atualizada
+        }
+        return Optional.empty(); // Retorna vazio se a categoria não existir
+    }
+
 
     public boolean pesquisarCategoriaPorNome(String nomeCategoria) {
         return categoriaRepository.findAll().stream().anyMatch(cat -> cat.getNome().equals(nomeCategoria)); // Verifica se existe uma categoria com o nome especificado
