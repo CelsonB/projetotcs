@@ -49,10 +49,9 @@ public class CategoriaRepository {
 
     public boolean deletarCategoria(int id){
         
-        if(pesquisarCategoriaPorId(id)!=null){
-            catLista.remove(id);
-            return true; 
-        }
+        if(catLista.removeIf(categorias -> categorias.getId() == id)){
+            return true;
+        }        
         return false;
    
 

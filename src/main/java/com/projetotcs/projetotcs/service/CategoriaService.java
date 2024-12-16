@@ -22,14 +22,10 @@ public class CategoriaService {
     }
 
     public ArrayList<Categoria> listarCategorias (){
-       
-        
         return categoriaRepository.listarCategorias();
     }
 
     public Categoria pesquisarCategoriaPorId(int id ){
-
-
         return categoriaRepository.pesquisarCategoriaPorId(id);
     
     }
@@ -44,7 +40,7 @@ public class CategoriaService {
 
     public boolean deletarCategoria(int id){
 
-        return deletarCategoria(id);
+        return categoriaRepository.deletarCategoria(id);
 
     }
         

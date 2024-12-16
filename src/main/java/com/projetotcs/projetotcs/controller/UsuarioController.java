@@ -37,9 +37,11 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioServices;
 
-    @Autowired
-    private SessaoService sessaoService;
+    private final SessaoService sessaoService;
 
+    public UsuarioController(SessaoService sessaoService) {
+        this.sessaoService = sessaoService;
+    }
 
 
 

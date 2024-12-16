@@ -35,15 +35,20 @@ public class CategoriaController {
     @Autowired
     CategoriaService categoriaService;
 
-    @Autowired
+  
     SessaoService sessaoService;
+
+    public CategoriaController(SessaoService sessaoService) {
+        this.sessaoService = sessaoService;
+    }
+
 
     @PostMapping("")
     public ResponseEntity<?> cadastrarCategoria(@RequestBody String nome, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
-        
-        if(!sessaoService.obterSessao(authorizationHeader).getUsuario().isAdmin()){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
-        }
+       
+//        if(sessaoService.isAdmin(authorizationHeader)==false){
+//           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+//      }
         
         if(categoriaService.cadastrarCategoria(nome)){
             return ResponseEntity.ok("");
@@ -80,15 +85,15 @@ public class CategoriaController {
     
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}") 
     public ResponseEntity<?> deletarCategoria(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
 
-        if(!sessaoService.obterSessao(authorizationHeader).getUsuario().isAdmin()){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
-        }
+//        if(sessaoService.isAdmin(authorizationHeader)==false){
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+//       }
 
-        if(categoriaService.pesquisarCategoriaPorId(id)==null)
+        if(!categoriaService.deletarCategoria(id))
         {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Categoria não encontrada"));
         }else{
@@ -103,17 +108,22 @@ public class CategoriaController {
      * 
      * 
      */
-    public boolean isHeaderValid(String authorizationHeader ){
+    public boolean isHeaderValid(String authorizationHeader) {
+        // Verifica se o cabeçalho está presente e tem o prefixo "Bearer "
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;
         }
-        
-        String token = authorizationHeader.substring(7); 
-
-        if (!sessaoService.obterSessao(token).isTokenValido(token)) {
-            return false;
+    
+        // Extrai o token do cabeçalho
+        String token = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
+    
+        // Valida o token
+        try {
+            sessaoService.validarToken(token); // Se o token for inválido, lançará uma exceção
+            return true;
+        } catch (Exception e) {
+            return false; // Retorna false se o token for inválido ou expirado
         }
-        return true;
     }
 
     
