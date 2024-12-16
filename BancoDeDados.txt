@@ -1,0 +1,19 @@
+Create database 'projeto-tcs';
+use 'projeto-tcs';
+
+
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    admin BOOLEAN DEFAULT FALSE
+);
+
+
+CREATE TABLE categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+
+insert into usuarios (nome, email, senha) values ('admin','admin@email.com','123456');

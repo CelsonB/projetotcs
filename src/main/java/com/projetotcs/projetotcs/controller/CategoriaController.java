@@ -50,7 +50,7 @@ public class CategoriaController {
 //           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
 //      }
         
-        if(categoriaService.cadastrarCategoria(nome)){
+        if(categoriaService.cadastrarCategoria(nome)!= null){
             return ResponseEntity.ok("");
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Dados invalidos"));

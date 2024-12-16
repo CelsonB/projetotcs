@@ -36,7 +36,6 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioServices;
-
     private final SessaoService sessaoService;
 
     public UsuarioController(SessaoService sessaoService) {
@@ -119,7 +118,7 @@ public class UsuarioController {
         
         if(isHeaderValid(authorizationHeader)){
             sessaoService.sairDeTodasSessoes();
-            return ResponseEntity.ok("Deslogado com sucesso.");
+            return ResponseEntity.ok("");
         }else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cabeçalho de autorização inválido.");
         }

@@ -1,6 +1,7 @@
 package com.projetotcs.projetotcs.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,24 +21,32 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
+    
+    public void addAdminUser () {
+        Usuario admin = new Usuario("admin@email.com","123456",true);
+        this.cadastrarUsuario(admin);//aqui deve cadastrar o admin
+    }
+
     //#region login e cadastro
+
 
     public boolean realizarLogin(String email, String senha){
 
-       if(usuarioRepository.realizarLogin(email,senha)){
-        System.out.println("service, true");
-        return true;
-       }else{
-        System.out.println("service, false");
-        return false;
-       } 
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        return usuario.isPresent() && usuario.get().getSenha().equals(senha);
        
 
     }
 
     public boolean cadastrarUsuario(Usuario user){
 
-       return  usuarioRepository.cadastrarUsuario(user);
+        if (!usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
+            usuarioRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
@@ -45,26 +54,41 @@ public class UsuarioService {
 
 
 
-    public ArrayList<Usuario> listarUsuarios(){
-        return usuarioRepository.listarUsuarios();
+    public List<Usuario> listarUsuarios(){
+        return usuarioRepository.findAll();
 
     }
 
 
     public Optional<Usuario> listarPorEmail(String email){
 
-        return  usuarioRepository.listarPorEmail(email);
+        return usuarioRepository.findByEmail(email);
 
     }
 
     public Usuario atualizarUsuario(String email, Usuario usuario){
-        return usuarioRepository.atualizarUsuario(email, usuario);
+
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(email);
+        
+        if (usuarioExistente.isPresent()) {
+            Usuario usuarioAtualizado = usuarioExistente.get();
+            usuarioAtualizado.setNome(usuario.getNome());
+            usuarioAtualizado.setSenha(usuario.getSenha()); // Atualize outros campos conforme necessário
+            return usuarioRepository.save(usuarioAtualizado); // Salva as alterações
+        }
+        return null; // Retorna null se o usuário não existir
 
     }
 
     public boolean deletarUsuario(String email){
 
-        return usuarioRepository.deletarUsuario(email);
+        try {
+            usuarioRepository.deleteById(email);
+            return true; // Retorna true se a exclusão foi bem-sucedida
+        } catch (Exception e) {
+            return false; // Retorna false se ocorrer um erro (por exemplo, se o usuário não existir)
+        }
+
 
     }
 }
