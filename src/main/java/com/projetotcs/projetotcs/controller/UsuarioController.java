@@ -56,7 +56,9 @@ public class UsuarioController {
         }
 
         if (usuarioServices.realizarLogin(user.getEmail(),user.getSenha())) {
+
             String sessionId = sessaoService.iniciarSessao(user);
+
             return ResponseEntity.ok(new TokenResponse(sessionId) ); 
 
         } else {
@@ -140,8 +142,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuarios/{email}")
-    public ResponseEntity<?> listarPorEmail(@PathVariable String email, 
-    @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
+    public ResponseEntity<?> listarPorEmail(@PathVariable String email, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
         
         if(isHeaderValid(authorizationHeader)){
@@ -167,8 +168,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/usuarios/{email}")
-    public ResponseEntity<?> atualizarUsuario(@PathVariable String email, 
-    @RequestBody Usuario usuario,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
+    public ResponseEntity<?> atualizarUsuario(@PathVariable String email, @RequestBody Usuario usuario,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
 
 
@@ -235,7 +235,7 @@ public class UsuarioController {
         
         String token = authorizationHeader.substring(7); 
 
-        if (!sessaoService.obterSessao(token).isTokenValido(token)) {
+        if (sessaoService.obterSessao(token)==null) {
             return false;
         }
         return true;

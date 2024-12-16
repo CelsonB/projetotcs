@@ -11,9 +11,6 @@ import com.projetotcs.projetotcs.model.Usuario;
 
 
 
-
-
-
 @Repository
 public class UsuarioRepository {
     

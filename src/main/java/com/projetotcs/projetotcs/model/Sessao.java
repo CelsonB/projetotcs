@@ -3,8 +3,20 @@ package com.projetotcs.projetotcs.model;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Date;
+import java.util.Base64;
+import java.security.Key;
+
+
+
+
+
 
 public class Sessao {
     
@@ -13,23 +25,34 @@ public class Sessao {
     private long dataCriacao; // Timestamp de criação da sessão
 
     public Sessao(Usuario usuario) {
+
         this.token = gerarToken(usuario); // Gera um UUID único
         this.usuario = usuario;
         this.dataCriacao = System.currentTimeMillis(); // Armazena o timestamp atual
     }
 
-    private static final String SECRET_KEY = "sua_chave_secreta";
+    private static final String SECRET_KEY = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
 
 
     private String gerarToken(Usuario usuario) {
+
+
+
+
+      byte[] secretKeyBytes = Base64.getDecoder().decode(SECRET_KEY);
+      Key key = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS256.getJcaName());
+
+        // Gera o token JWT
         return Jwts.builder()
-                .setSubject(usuario.getEmail()) // ID do usuário
-                .claim("admin", usuario.isAdmin()) // Adiciona se é admin
+                .setSubject(usuario.getEmail())
+                .claim("admin", usuario.isAdmin())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // Expira em 1 dia
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 dia
+                .signWith(key) // Passa apenas o objeto Key
                 .compact();
+
+                
     }
 
     
