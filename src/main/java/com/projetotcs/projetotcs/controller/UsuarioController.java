@@ -133,6 +133,11 @@ public class UsuarioController {
     public ResponseEntity<?> listarUsuarios(
         @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
+
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+        }
+
         if(isHeaderValid(authorizationHeader)){
             return ResponseEntity.ok(usuarioServices.listarUsuarios());
         }else{
@@ -229,17 +234,19 @@ public class UsuarioController {
 
 
 
-     public boolean isHeaderValid(String authorizationHeader ){
+     public boolean isHeaderValid(String authorizationHeader) {
+
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;
         }
-        
-        String token = authorizationHeader.substring(7); 
-
-        if (sessaoService.obterSessao(token)==null) {
-            return false;
+    
+        String token = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
+        try {
+            sessaoService.validarToken(token); // Se o token for inválido, lançará uma exceção
+            return true;
+        } catch (Exception e) {
+            return false; // Retorna false se o token for inválido ou expirado
         }
-        return true;
     }
 
     

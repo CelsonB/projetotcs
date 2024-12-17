@@ -45,13 +45,15 @@ public class CategoriaController {
 
 
     @PostMapping("")
-    public ResponseEntity<?> cadastrarCategoria(@RequestBody String nome, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
+    public ResponseEntity<?> cadastrarCategoria(@RequestBody Categoria cat, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
        
-//        if(sessaoService.isAdmin(authorizationHeader)==false){
-//           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
-//      }
+       
+
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+        }
         
-        if(categoriaService.cadastrarCategoria(nome)!= null){
+        if(categoriaService.cadastrarCategoria(cat.getNome())!= null){
             return ResponseEntity.ok("");
         }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Dados invalidos"));
@@ -77,6 +79,11 @@ public class CategoriaController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizarCategoria(@PathVariable int id, @RequestBody Categoria cat,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
+
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+         }
+
         if(isHeaderValid(authorizationHeader)){
             return ResponseEntity.ok(categoriaService.atualizarCategoria(id, cat.getNome()));
         }else
@@ -90,9 +97,9 @@ public class CategoriaController {
     public ResponseEntity<?> deletarCategoria(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ){
 
 
-//        if(sessaoService.isAdmin(authorizationHeader)==false){
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
-//       }
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
+        }
 
         if(!categoriaService.deletarCategoria(id))
         {

@@ -61,7 +61,7 @@ public class SessaoService {
   public String gerarToken(Usuario usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getEmail())
-                .claim("admin", true)
+                .claim("admin", usuario.isAdmin())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // Expira em 1 dia
                 .signWith(key)
