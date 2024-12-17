@@ -61,6 +61,7 @@ public class SessaoService {
   public String gerarToken(Usuario usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getEmail())
+                .claim("email", usuario.getEmail())
                 .claim("admin", usuario.isAdmin())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // Expira em 1 dia
@@ -75,7 +76,14 @@ public class SessaoService {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.getSubject(); 
+
+            Object email = claims.get("email");
+            if (email != null) {
+                return email.toString();
+            } else {
+                throw new RuntimeException("Claim 'email' não encontrado no token.");
+            }
+
         } catch (JwtException e) {
             throw new RuntimeException("Token inválido ou expirado");
         }
