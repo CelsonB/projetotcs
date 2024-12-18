@@ -1,5 +1,5 @@
-Create database 'projeto-tcs';
-use 'projeto-tcs';
+CREATE DATABASE `projeto-tcs`;
+USE `projeto-tcs`;
 
 
 CREATE TABLE usuarios (
@@ -16,4 +16,4 @@ CREATE TABLE categorias (
     nome VARCHAR(255) NOT NULL
 );
 
-insert into usuarios (nome, email, senha) values ('admin','admin@email.com','123456');
+insert into usuarios (nome, email, senha,admin ) values ('admin','admin@email.com','123456', true);
