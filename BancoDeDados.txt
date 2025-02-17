@@ -17,3 +17,10 @@ CREATE TABLE categorias (
 );
 
 insert into usuarios (nome, email, senha,admin ) values ('admin','admin@email.com','123456', true);
+
+CREATE TABLE avisos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_categoria INT NOT NULL,
+    descricao TEXT NOT NULL
+);
+
