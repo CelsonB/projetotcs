@@ -48,7 +48,9 @@ public class AvisoController {
     @PostMapping
     public ResponseEntity<?> cadastrarAviso(@RequestBody Aviso aviso,@RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
-        if(isHeaderValid(authorizationHeader)) if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+        if(!isHeaderValid(authorizationHeader)) 
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Header não é valido"));        
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
         }
 
@@ -78,7 +80,10 @@ public class AvisoController {
     public ResponseEntity<?> atualizarAviso(@PathVariable int id, @RequestBody Aviso aviso, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
         
-        if(isHeaderValid(authorizationHeader)) if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+        if(!isHeaderValid(authorizationHeader)) 
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Header não é valido"));
+        
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
         }
 
@@ -95,7 +100,10 @@ public class AvisoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletarAviso(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 
-        if(isHeaderValid(authorizationHeader)) if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
+        if(!isHeaderValid(authorizationHeader)) 
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Header não é valido"));
+        
+        if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
         }
 
