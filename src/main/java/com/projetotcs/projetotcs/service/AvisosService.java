@@ -37,7 +37,16 @@ public class AvisosService {
             .orElseThrow(() -> new RuntimeException("Aviso não encontrado"));
     }
 
-    public void deletarAviso(Long id) {
-        avisoRepository.deleteById(id);
+    public boolean deletarAviso(Long id) 
+    {
+        if(avisoRepository.existsById(id)){
+            avisoRepository.deleteById(id);
+            return true;
+        }else{
+            return false; 
+        }
+        
+    
+        
     }
 }
