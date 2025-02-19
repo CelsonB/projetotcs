@@ -61,14 +61,21 @@ public class AvisoController {
        
     }
 
-    @GetMapping
-    public ResponseEntity<List<Aviso>> listarAvisos() {
-        List<Aviso> avisos = avisosService.listarAvisos();
+  //  @GetMapping
+  //  public ResponseEntity<List<Aviso>> listarAvisos() {
+  //     List<Aviso> avisos = avisosService.listarAvisos();
+  //     return ResponseEntity.ok(avisos);
+  // }
+
+
+    @GetMapping("/{idCategoria}")
+    public ResponseEntity<List<Aviso>> listarAvisosPorCategoria(@PathVariable int idCategoria) {
+        List<Aviso> avisos = avisosService.buscarPorCategoria(idCategoria);
         return ResponseEntity.ok(avisos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarAviso(@PathVariable Long id, @RequestBody Aviso aviso, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
+    public ResponseEntity<?> atualizarAviso(@PathVariable int id, @RequestBody Aviso aviso, @RequestHeader(value = "Authorization", required = false) String authorizationHeader ) {
 
         
         if(isHeaderValid(authorizationHeader)) if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
@@ -86,7 +93,7 @@ public class AvisoController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarAviso(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+    public ResponseEntity<?> deletarAviso(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
 
         if(isHeaderValid(authorizationHeader)) if(sessaoService.isAdmin(authorizationHeader.substring(7))==false){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Você não tem permissão suficiente para performar esta ação"));
@@ -103,20 +110,20 @@ public class AvisoController {
     }
 
     public boolean isHeaderValid(String authorizationHeader) {
-        // Verifica se o cabeçalho está presente e tem o prefixo "Bearer "
+       
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return false;
         }
     
-        // Extrai o token do cabeçalho
+
         String token = authorizationHeader.substring(7); // Remove o prefixo "Bearer "
     
-        // Valida o token
+  
         try {
-            sessaoService.validarToken(token); // Se o token for inválido, lançará uma exceção
+            sessaoService.validarToken(token); 
             return true;
         } catch (Exception e) {
-            return false; // Retorna false se o token for inválido ou expirado
+            return false; 
         }
     }
 

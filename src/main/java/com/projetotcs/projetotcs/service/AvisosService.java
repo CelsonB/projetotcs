@@ -24,11 +24,12 @@ public class AvisosService {
         return avisoRepository.findAll();
     }
 
-    public Optional<Aviso> buscarAvisoPorId(Long id) {
-        return avisoRepository.findById(id);
+   
+    public List<Aviso> buscarPorCategoria(int idCategoria) {
+        return avisoRepository.findByIdCategoria(idCategoria);
     }
 
-    public Aviso atualizarAviso(Long id, Aviso avisoAtualizado) {
+    public Aviso atualizarAviso(int id, Aviso avisoAtualizado) {
         return avisoRepository.findById(id)
             .map(aviso -> {
                 aviso.setDescricao(avisoAtualizado.getDescricao());
@@ -37,7 +38,7 @@ public class AvisosService {
             .orElseThrow(() -> new RuntimeException("Aviso não encontrado"));
     }
 
-    public boolean deletarAviso(Long id) 
+    public boolean deletarAviso(int id) 
     {
         if(avisoRepository.existsById(id)){
             avisoRepository.deleteById(id);
